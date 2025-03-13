@@ -15,15 +15,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/YNhuLe/tralli_client.git"
+    "url": "git+https://github.com/YNhuLe/tralli_server.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/YNhuLe/tralli_client/issues"
+    "url": "https://github.com/YNhuLe/tralli_server/issues"
   },
-  "homepage": "https://github.com/YNhuLe/tralli_client#readme",
+  "homepage": "https://github.com/YNhuLe/tralli_server#readme",
   "dependencies": {
     "axios": "^1.8.3",
     "cors": "^2.8.5",
