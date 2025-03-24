@@ -45,24 +45,14 @@ broader audience of property owners.
 ### Features
 
 - As a user I want to book a demo
+- As a user I want to sign up, I want to create an account to access the platform.
+- As a user I want to log in, I want to access the platform with my account.
+- As a user I want to be able to sign up with Google, I want to use
+  third-party authentication.
+- As a user I want to view service categories, I want to browse available
+  services based on categories.
 
-- As a logged in user I want to find a trade professional, I want to be able to
-  search for services based on location, service type, and availability.
-- As a logged in user I want to book a service, I want to be able to view
-  service providers' profiles, reviews, and pricing.
-- As a logged in user I want to track service progress, I want to receive
-  notifications and updates on service appointments.
-- As a logged in user I want to rate and review a service, I want to provide
-  feedback on the quality of service received.
-- As a logged in user I want to manage my account, I want to view my service
-  history and manage my profile.
 
-- As a business owner I want to list my services, I want to showcase my
-  services, pricing, and availability.
-- As a business owner I want to manage appointments, I want to view and manage
-  service appointments and track service progress.
-- As a business owner I want to receive ratings and reviews, I want to receive
-  feedback from customers and improve my services.
 
 ## Implementation
 
@@ -73,21 +63,15 @@ broader audience of property owners.
 
   - Client libraries:
     - react
-    - react-router
+    - react-router-dom
     - axios
-    - @sendgrid/mail
-    - @stripe/stripe-js
-    - @fortawesome/fontawesome-free
-    - @react-oauth/facebook
-    - @react-oauth/google
+    - firebase
 
 - **Backend**: 🌿 Node.js, Express,🐬 MySQL
   - Server libraries:
     - express
     - cors
     - dotenv
-    - jsonwebtoken
-    - bcryptjs
     - mysql2
 
 ### APIs
@@ -122,17 +106,16 @@ List any external sources of data that will be used in your app.
 
 - Home Page: Landing page with a brief description of the platform, book a demo
   and a call to action to sign up or log in.
-  ![HomePage](assets/images/HomePage.jpg)
+  ![HomePage](assets/images/HomePage.png)
+- Demo page: User can book a demo
+  ![Demo](assets/images/Demo.png)
 - Sign Up Page: Registration form for new users to create an account, or can use
   Google, facebook account as a third-party authentication.
-  ![Sign up](assets/images/SignUp.jpg)
-- Profile Page: User profile with account details, payment information.
-  ![Profile](assets/images/Profile.jpg)
+  ![Sign up](assets/images/SignUp.png)
+
 - Service Page: List of available services categories with search and filter
-  options. ![Logged_In_HomeScreen](assets/images/Logged_In_HomeScreen.jpg)
-- Issues Page: List of issues from a specific service category where user can
-  choose the issue and book a service.
-  ![Issue_page](assets/images/Issue_page.jpg)
+  options. ![Logged_In_HomeScreen](assets/images/LogedIn.png)
+
 
 ### Data
 
@@ -143,13 +126,9 @@ List any external sources of data that will be used in your app.
 - **GET** `/`:Home page
 - **GET** `/signup`:Show Sign up page
 - **POST** `/signup`:Register a new user
-- **GET** `/login`:Login page
-- **POST** `/login`:Login user
-- **GET** `/profile`:User profile
-- **GET** `/services`:List of services
-- **GET** `/services/:id`:Service details
-- **GET** `/issues`:List of issues
-- **POST** `/issues/:id`:Issue details, payment, and booking
+- **GET** `/categories?fullName=fullName&residentialCom=residentialCom`:categories page when user signed in
+- **GET** `/categories/:id/services`:List of services from specific category
+
 
 ## Roadmap
 
@@ -162,14 +141,8 @@ List any external sources of data that will be used in your app.
   - express project with routing, with placeholder 200 responses
 
 - Create models
-  - create models for users, services, issues, and bookings
-- Create migrations
+  - create models for users, services, issues, and bookings, demo, categories, ratings, provider_availability
 
-  - create database schema with tables and relationships
-
-- Create seed data
-
-  - create seed data for users, services, issues, and bookings
 
 - Create controllers
 
@@ -180,6 +153,38 @@ List any external sources of data that will be used in your app.
 
 ## Future Implementations
 
+###Endpoints
+- **GET** `/services/:id`:Service details
+- **GET** `/issues`:List of issues
+- **POST** `/issues/:id`:Issue details, payment, and booking
+
+
+###Pages 
+- Profile Page: User profile with account details, payment information.
+  ![Profile](assets/images/Profile.jpg)
+
+- Issues Page: List of issues from a specific service category where user can
+  choose the issue and book a service.
+  ![Issue_page](assets/images/Issue_page.jpg)
+
+### Features
+- As a logged in user I want to find a trade professional, I want to be able to
+  search for services based on location, service type, and availability.
+- As a logged in user I want to book a service, I want to be able to view
+  service providers' profiles, reviews, and pricing.
+- As a logged in user I want to track service progress, I want to receive
+  notifications and updates on service appointments.
+- As a logged in user I want to rate and review a service, I want to provide
+  feedback on the quality of service received.
+- As a logged in user I want to manage my account, I want to view my service
+  history and manage my profile.
+
+- As a business owner I want to list my services, I want to showcase my
+  services, pricing, and availability.
+- As a business owner I want to manage appointments, I want to view and manage
+  service appointments and track service progress.
+- As a business owner I want to receive ratings and reviews, I want to receive
+  feedback from customers and improve my services.
 - Implement Google Maps API for location-based services
 - Implement Mapbox API for mapping and distance calculation services
 - Implement SendGrid API for email confirmation and notifications
