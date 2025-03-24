@@ -62,4 +62,22 @@ const getDemoData = async (req, res) => {
   }
 };
 
-export { getAllServices, sendDemoRequest, getDemoData };
+//GET list of services for specific category
+
+const getServiceFromCategory = async (req, res) => {
+  try {
+    const services = await knex("categories")
+      .join("services", "services.category_id", "categories.id")
+      .where({
+        category_id: req.params.id,
+      });
+    res.json(services);
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        message: `Unable to get services for category ID ${req.params.id}`,
+      });
+  }
+};
+export { getAllServices, sendDemoRequest, getDemoData, getServiceFromCategory };

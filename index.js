@@ -5,7 +5,7 @@ import serviceRoutes from "./routes/services-routes.js";
 import categorieRoutes from "./routes/categories-routes.js";
 import userRoutes from "./routes/users-routes.js";
 
-const port = process.env.PORT ?? 8080;
+const port = process.env.PORT ?? 5050;
 
 const app = express();
 //enable cors
