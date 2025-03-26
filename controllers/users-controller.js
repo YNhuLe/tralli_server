@@ -46,15 +46,15 @@ const addUser = async (req, res) => {
   }
 
   //validate phone number format
+  if (typeof phone_number !== "string") {
+    return res.status(400).json({
+      message: "Phone number should be a string!",
+    });
+  }
   const phoneRegex = /^\+\d{1,3} \(\d{3}\) \d{3}-\d{4}$/;
   if (!phoneRegex.test(phone_number)) {
     return res.status(400).json({
       message: "Phone number must be in format: +1 (919) 797-2875",
-    });
-  }
-  if (typeof phone_number !== "string") {
-    return res.status(400).json({
-      message: "Phone number should be a string!",
     });
   }
 
@@ -72,15 +72,6 @@ const addUser = async (req, res) => {
       message: `Unable to create new user: ${error}`,
     });
   }
-
-  //   {
-  //     "user_name" :"Jin",
-  //     "address" :"12 full",
-  //     "email" :"12@gmail.com",
-  //     "phone_number" :"+1 (415) 112-3322",
-  //     "residential_community" :"Sheirdan",
-  //     "uid" :"djglaTYe878w45elkjszfns/n"
-  // }
 };
 
 const getSingleUser = async (req, res) => {
@@ -105,4 +96,69 @@ const getSingleUser = async (req, res) => {
     res.status(500).send(`Error getting user base on ID: ${error}`);
   }
 };
-export { getUser, addUser, getSingleUser };
+
+const googleSignup = async (req, res) => {
+  const { uid, user_name, email } = req.body;
+  if (!uid || !user_name || !email) {
+    return res
+      .status(400)
+      .json({ message: "Please provide information for all the fields!" });
+  }
+
+  try {
+    const existingUser = await knex("users").where({ uid }).first();
+    if (existingUser) {
+      return res.status(409).json({ message: "User is already exist" });
+    }
+    const result = await knex("users").insert(req.body);
+    const newUser = await knex("users").where({ uid }).first();
+    res
+      .status(201)
+      .json({ message: "User added successfully!", user: newUser });
+  } catch (error) {
+    res.status(500).json({ message: `Unable to add new user: ${error}` });
+  }
+};
+const addNewUserFromGoogle = async (req, res) => {
+  console.log("Received body:", req.body);
+  const { address, phone_number, residential_community, uid } = req.body;
+
+  if (!phone_number || !residential_community || !uid || !address) {
+    return res.status(400).json({
+      message: "Please provide information for all the fields!",
+    });
+  }
+
+  //validate phone number format
+  if (typeof phone_number !== "string") {
+    return res.status(400).json({
+      message: "Phone number should be a string!",
+    });
+  }
+  const phoneRegex = /^\+\d{1,3} \(\d{3}\) \d{3}-\d{4}$/;
+  if (!phoneRegex.test(phone_number)) {
+    return res.status(400).json({
+      message: "Phone number must be in format: +1 (919) 797-2875",
+    });
+  }
+
+  try {
+    const existingUser = await knex("user").where({ uid }).first();
+    if (existingUser) {
+      return res.status(409).json({ message: "User is already exist" });
+    }
+    const result = await knex("users").insert(req.body);
+    const newUserId = result[0];
+    const createdUser = await knex("users")
+      .where({
+        id: newUserId,
+      })
+      .first();
+    res.status(201).json(createdUser);
+  } catch (error) {
+    res.status(500).json({
+      message: `Unable to create new user: ${error}`,
+    });
+  }
+};
+export { getUser, addUser, getSingleUser, addNewUserFromGoogle, googleSignup };
