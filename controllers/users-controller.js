@@ -14,7 +14,7 @@ const getUser = async (_req, res) => {
   }
 };
 
-//POST new user into database when user signed up
+//POST new user into database when user signed up by the FORM
 const addUser = async (req, res) => {
   console.log("Received body:", req.body);
   const {
@@ -58,6 +58,20 @@ const addUser = async (req, res) => {
     });
   }
 
+
+  try{
+    const existingUser = await knex("users").where("email", email).orWhere("phone_number", phone_number).first();
+if(existingUser){
+  if(existingUser.email === email){
+    return res.status(400).json({message: "Email is already in use."})
+  }
+  if(existingUser.phone_number === phone_number){
+    return res.status(400).json({message:"Phone number is already in use."})
+  }
+}
+  }catch(error){
+
+  }
   try {
     const result = await knex("users").insert(req.body);
     const newUserId = result[0];
@@ -97,28 +111,94 @@ const getSingleUser = async (req, res) => {
   }
 };
 
-const googleSignup = async (req, res) => {
-  const { uid, user_name, email } = req.body;
-  if (!uid || !user_name || !email) {
-    return res
-      .status(400)
-      .json({ message: "Please provide information for all the fields!" });
-  }
+// Sign up with Google account
+// const googleSignup = async (req, res) => {
+//   const { uid, user_name, email } = req.body;
+//   if (!uid || !user_name || !email) {
+//     return res
+//       .status(400)
+//       .json({ message: "Please provide information for all the fields!" });
+//   }
 
-  try {
-    const existingUser = await knex("users").where({ uid }).first();
-    if (existingUser) {
-      return res.status(409).json({ message: "User is already exist" });
+//   try {
+//     const existingUser = await knex("users").where({ uid }).first();
+//     if (existingUser) {
+//       return res.status(409).json({ message: "User is already exist" });
+//     }
+//     const result = await knex("users").insert(req.body);
+//     const newUser = await knex("users").where({ uid }).first();
+//     res
+//       .status(201)
+//       .json({ message: "User added successfully!", user: newUser });
+//   } catch (error) {
+//     res.status(500).json({ message: `Unable to add new user: ${error}` });
+//   }
+// };
+
+//check if user exist and their profile is complete when signin up suing Google
+const checkUser = async(req, res) =>{
+  const {uid} = req.params;
+  try{
+    const user = await knex("users").where({uid}).first();
+
+    if(!user){
+      return res.status(200).json({exists:false})
     }
-    const result = await knex("users").insert(req.body);
-    const newUser = await knex("users").where({ uid }).first();
-    res
-      .status(201)
-      .json({ message: "User added successfully!", user: newUser });
-  } catch (error) {
-    res.status(500).json({ message: `Unable to add new user: ${error}` });
+const isComplete =!!(user.address && user.phone_number && user.residential_community)
+    return res.status(200).json({exists:true, complete: isComplete})
+  }catch(error){
+res.status(500).json({message:"Error checking user", error})
   }
-};
+}
+
+
+//POST add user into the database signing up using Google
+// const createFullUser = async(req, res) =>{
+//   const {
+//     uid,
+//     user_name,
+//     email,
+//     address,
+//     phone_number,
+//     residential_community,
+//   } = req.body;
+//   if (
+//     !uid ||
+//     !user_name ||
+//     !email ||
+//     !address ||
+//     !phone_number ||
+//     !residential_community
+//   ) {
+//     return res.status(400).json({ message: "Please fill out all fields." });
+//   }
+
+//   //validate phone number format
+//   if (typeof phone_number !== "string") {
+//     return res.status(400).json({
+//       message: "Phone number should be a string!",
+//     });
+//   }
+//   const phoneRegex = /^\+\d{1,3} \(\d{3}\) \d{3}-\d{4}$/;
+//   if (!phoneRegex.test(phone_number)) {
+//     return res.status(400).json({
+//       message: "Phone number must be in format: +1 (919) 797-2875",
+//     });
+//   }
+
+//   try{
+//     const existingUser = await knex("users").where({uid}).first();
+//     if(existingUser){
+//       return res.status(409).json({message:"User already exists in the database."})
+//     }
+//     await knex("users").insert(req.body);
+//     return res.status(201).json({message:"User profile created successfully!"})
+//   }catch(error){
+//     return res.status(500).json({message:"Database error: ", error})
+//   }
+// }
+
+
 const addNewUserFromGoogle = async (req, res) => {
   console.log("Received body:", req.body);
   const { address, phone_number, residential_community, uid } = req.body;
@@ -143,10 +223,27 @@ const addNewUserFromGoogle = async (req, res) => {
   }
 
   try {
-    const existingUser = await knex("user").where({ uid }).first();
+    const existingUser = await knex("users").where({ uid }).first();
     if (existingUser) {
       return res.status(409).json({ message: "User is already exist" });
     }
+
+    try {
+      const existingUser = await knex("users")
+        .where("email", email)
+        .orWhere("phone_number", phone_number)
+        .first();
+      if (existingUser) {
+        if (existingUser.email === email) {
+          return res.status(400).json({ message: "Email is already in use." });
+        }
+        if (existingUser.phone_number === phone_number) {
+          return res
+            .status(400)
+            .json({ message: "Phone number is already in use." });
+        }
+      }
+    } catch (error) {}
     const result = await knex("users").insert(req.body);
     const newUserId = result[0];
     const createdUser = await knex("users")
@@ -161,4 +258,4 @@ const addNewUserFromGoogle = async (req, res) => {
     });
   }
 };
-export { getUser, addUser, getSingleUser, addNewUserFromGoogle, googleSignup };
+export { getUser, addUser, getSingleUser, checkUser, addNewUserFromGoogle};

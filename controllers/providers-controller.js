@@ -25,9 +25,7 @@ const getProvider = async (req, res) => {
         "provider_availability.end_time",
         "provider_availability.is_available",
         "provider_availability.day_of_week"
-      )
-      .first();
-
+      );
     if (!provider) {
       return res
         .status(404)
@@ -37,6 +35,16 @@ const getProvider = async (req, res) => {
     res.status(200).json(provider);
   } catch (error) {
     res.status(500).send(`Error retrieving provider: ${error}`);
+  }
+};
+
+const providerAvailability = async (req, res) => {
+  const { providerId, day } = req.params;
+
+  try {
+  } catch (error) {
+    console.error("Error fetching the day: ", error);
+    res.status(500).json({ message: "Error fetching the day!" });
   }
 };
 export { getProvider };
