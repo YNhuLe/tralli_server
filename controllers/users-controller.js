@@ -104,8 +104,8 @@ const getSingleUser = async (req, res) => {
         .status(404)
         .json({ message: `User with ID${uid} is not found!` });
     }
-
-    res.status(200).json(singleUser);
+const { user_name, address, residential_community } = singleUser;
+res.status(200).json({ user_name, address, residential_community });
   } catch (error) {
     res.status(500).send(`Error getting user base on ID: ${error}`);
   }
