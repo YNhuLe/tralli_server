@@ -1,7 +1,7 @@
 # Tralli🛠️ 🧰
 
 ##Demo
-🎥 [Watch the demo](assets/images/demo.webm)
+🎥[Watch the demo](assets/images/demo_homepage.webm)
 
 
 ## Overview
