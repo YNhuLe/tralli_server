@@ -1,5 +1,9 @@
 # Tralli🛠️ 🧰
 
+##Demo
+🎥 [Watch the demo](assets/images/demo.webm)
+
+
 ## Overview
 
 Tralli is a platform that connects users, especially developers, with trade
